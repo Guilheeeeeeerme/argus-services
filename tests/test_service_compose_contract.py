@@ -6,10 +6,12 @@ import yaml
 SERVICES_ROOT = Path(__file__).parents[1]
 
 PUBLIC_PROJECTS = {
-    "capture": 3001,
-    "triage": 3002,
-    "realtime": 3003,
+    "capture": 3000,
+    "triage": 3001,
+    "realtime": 3002,
 }
+
+PUBLIC_INTERNAL_PORTS = {"capture": 8001, "triage": 3002, "realtime": 8002}
 PRIVATE_PROJECTS = {"notifications", "analysis"}
 
 
@@ -35,11 +37,12 @@ def test_each_service_project_can_join_the_core_external_network() -> None:
 
 
 def test_public_services_use_the_documented_non_core_ports() -> None:
-    """A wrong host port collides with Core Admin or breaks the documented local URL."""
+    """Public services are exposed through Core's shared TLS gateway ports."""
     for project, port in PUBLIC_PROJECTS.items():
         service = _service(_compose(project))
-        internal_port = {"capture": 8001, "realtime": 8002}.get(project, port)
-        assert service["ports"] == [f"${{ARGUS_BIND_HOST:-127.0.0.1}}:{port}:{internal_port}"]
+        internal_port = PUBLIC_INTERNAL_PORTS[project]
+        assert "ports" not in service
+        assert service.get("expose") == [str(internal_port)]
 
     for project in PRIVATE_PROJECTS:
         assert "ports" not in _service(_compose(project))

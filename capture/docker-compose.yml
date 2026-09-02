@@ -17,8 +17,7 @@ services:
       RABBITMQ_EVENT_NAMES: sequence.ingested.v1
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       REDIS_ROLE: idempotency
-    ports:
-      - "${ARGUS_BIND_HOST:-127.0.0.1}:3001:8001"
+    expose: ["8001"]
     networks: [argus_dev]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]

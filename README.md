@@ -12,6 +12,8 @@ Every project joins the external `argus_dev` network.  Service wire models are
 provided by the separately versioned `argus-libs` contracts package; this
 skeleton deliberately contains no Core source mounts.
 
-Public development ports are capture `3001`, triage `3002`, and
-realtime `3003`. Notifications and analysis expose only their internal health
-endpoint on `8080`.
+Core's Caddy gateway terminates HTTPS for public services. The public URLs are
+capture `https://development.argus.com:3000`, triage
+`https://development.argus.com:3001`, and realtime
+`https://development.argus.com:3002`. Notifications and analysis expose only
+their internal health endpoint on `8080`.

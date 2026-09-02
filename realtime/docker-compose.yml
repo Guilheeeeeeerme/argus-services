@@ -17,8 +17,7 @@ services:
       RABBITMQ_EVENT_NAMES: decision.created.v1,decision.resolved.v1
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       REDIS_ROLE: pubsub,short-lived-state
-    ports:
-      - "${ARGUS_BIND_HOST:-127.0.0.1}:3003:8002"
+    expose: ["8002"]
     networks: [argus_dev]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
