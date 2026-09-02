@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
-const API = import.meta.env.VITE_ADMIN_API ?? 'https://api.development.argus.com'; const WS = import.meta.env.VITE_WS_API ?? 'wss://ws.development.argus.com'; const TENANT = '11111111-1111-4111-8111-111111111111';
+declare global {
+  interface Window {
+    ARGUS_TRIAGE_CONFIG?: { apiUrl: string; websocketUrl: string };
+  }
+}
+const runtimeConfig = window.ARGUS_TRIAGE_CONFIG;
+const API = runtimeConfig?.apiUrl ?? import.meta.env.VITE_ADMIN_API ?? 'https://api.development.argus.com';
+const WS = runtimeConfig?.websocketUrl ?? import.meta.env.VITE_WS_API ?? 'wss://development.argus.com:3002';
+const TENANT = '11111111-1111-4111-8111-111111111111';
 function App() { const [token,setToken]=useState(''); const [decisions,setDecisions]=useState<any[]>([]); const [selected,setSelected]=useState<any>(null); const [state,setState]=useState(''); const [reason,setReason]=useState(''); const [message,setMessage]=useState('Choose Watcher login.');
   async function load(t:string){setToken(t); const r=await fetch(`${API}/v1/tenants/${TENANT}/decisions`,{headers:{authorization:`Bearer ${t}`}}); setDecisions(await r.json()); setMessage('Live triage connected.'); const ws=new WebSocket(`${WS}/v1/ws?token=${encodeURIComponent(t)}`); ws.onmessage=()=>fetch(`${API}/v1/tenants/${TENANT}/decisions`,{headers:{authorization:`Bearer ${t}`}}).then(x=>x.json()).then(setDecisions); ws.onclose=()=>setMessage('WebSocket disconnected; refresh to reconnect.'); }
   async function detail(d:any){setSelected(await fetch(`${API}/v1/tenants/${TENANT}/decisions/${d.id}`,{headers:{authorization:`Bearer ${token}`}}).then(r=>r.json()));}

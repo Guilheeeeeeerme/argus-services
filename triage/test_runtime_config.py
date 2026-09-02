@@ -25,6 +25,14 @@ class RuntimeConfigImageTest(unittest.TestCase):
         self.assertIn("TRIAGE_WS_URL", entrypoint)
         self.assertIn("/usr/share/nginx/html/env.js", entrypoint)
 
+    def test_built_client_loads_and_consumes_runtime_websocket_config(self) -> None:
+        index = (SERVICE_ROOT / "client/index.html").read_text()
+        client = (SERVICE_ROOT / "client/src/main.tsx").read_text()
+
+        self.assertIn('<script src="/env.js"></script>', index)
+        self.assertIn("window.ARGUS_TRIAGE_CONFIG", client)
+        self.assertIn("wss://development.argus.com:3002", client)
+
 
 if __name__ == "__main__":
     unittest.main()
