@@ -14,7 +14,14 @@ compose_file="$project/docker-compose.yml"
 docker compose -f "$compose_file" config --quiet
 docker network inspect argus_dev >/dev/null
 
+container_id="$(docker compose -f "$compose_file" ps -q "$project")"
+if [[ -z "$container_id" ]]; then
+  echo "Service container is not running: $project" >&2
+  exit 1
+fi
+
 if [[ "$project" == notifications || "$project" == analysis ]]; then
+  test "$(docker inspect --format '{{.State.Health.Status}}' "$container_id")" = healthy
   echo "Service smoke checks passed: $project"
   exit 0
 fi
