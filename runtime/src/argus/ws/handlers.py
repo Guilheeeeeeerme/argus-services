@@ -21,6 +21,7 @@ router = APIRouter(tags=["ws"])
 
 @router.websocket("/v1/ws")
 async def triage_websocket(websocket: WebSocket, token: str | None = None) -> None:
+    token = token or websocket.cookies.get("argus_dev_token")
     if not token:
         await websocket.close(code=4001, reason="Missing token")
         return

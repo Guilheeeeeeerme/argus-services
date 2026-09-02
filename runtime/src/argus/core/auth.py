@@ -12,6 +12,7 @@ from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from argus.config import settings
 from argus.domain.enums import UserRole
 from argus.integrations.auth0 import validate_jwt
 from argus.services.database import get_db as _get_db, set_session_context
@@ -163,13 +164,18 @@ async def get_auth_context(
     request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
 ) -> AuthContext:
-    if credentials is None or credentials.scheme.lower() != "bearer":
+    token = None
+    if credentials is not None and credentials.scheme.lower() == "bearer":
+        token = credentials.credentials
+    elif settings.auth0_use_mock:
+        token = request.cookies.get("argus_dev_token")
+    if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing bearer token",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    auth = _auth_context_from_token(credentials.credentials)
+    auth = _auth_context_from_token(token)
     request.state.auth = auth
     return auth
 

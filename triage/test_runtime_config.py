@@ -33,6 +33,13 @@ class RuntimeConfigImageTest(unittest.TestCase):
         self.assertIn("window.ARGUS_TRIAGE_CONFIG", client)
         self.assertIn("wss://development.argus.com:3002", client)
 
+    def test_triage_uses_shared_login_and_active_tenant(self) -> None:
+        client = (SERVICE_ROOT / "client/src/main.tsx").read_text()
+        self.assertIn("https://app.development.argus.com/?returnTo=", client)
+        self.assertIn("/v1/auth/session", client)
+        self.assertIn("session.tenant_id", client)
+        self.assertNotIn("v1/dev/session", client)
+
 
 if __name__ == "__main__":
     unittest.main()
