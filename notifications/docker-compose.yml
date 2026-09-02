@@ -1,0 +1,24 @@
+services:
+  notifications:
+    build:
+      context: ..
+      dockerfile: runtime/Dockerfile
+      target: worker
+    environment:
+      PORT: 8080
+      SERVICE_ROLE: worker-notify
+      ARGUS_CONTRACTS_VERSION: ${ARGUS_CONTRACTS_VERSION:-1.0.0}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://argus:argus@rabbitmq:5672/}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      NOTIFICATION_PROVIDER: ${NOTIFICATION_PROVIDER:-log}
+    networks: [argus_dev]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A argus.workers.celery_app inspect ping --timeout=2 | grep -q pong"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+networks:
+  argus_dev:
+    external: true
+    name: ${ARGUS_NETWORK:-argus_dev}

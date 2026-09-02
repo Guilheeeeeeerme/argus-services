@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARGUS Triage</title>
+    <script src="/env.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>ARGUS Triage</h1>
+      <p id="status">Triage service is available.</p>
+    </main>
+    <script>
+      document.getElementById("status").textContent =
+        "API: " + window.ARGUS_TRIAGE_CONFIG.apiUrl;
+    </script>
+  </body>
+</html>
