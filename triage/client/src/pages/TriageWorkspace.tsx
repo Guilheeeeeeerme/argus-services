@@ -16,7 +16,7 @@ interface TriageWorkspaceProps {
 
 export function TriageWorkspace({ session }: TriageWorkspaceProps) {
   const [decisions, setDecisions] = useState<Decision[]>([]);
-  const [selected, setSelected] = useState<any>(null);
+  const [selected, setSelected] = useState<Decision | null>(null);
   const [message, setMessage] = useState('');
   const tenant = session.tenant_id;
 
