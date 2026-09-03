@@ -38,6 +38,7 @@ export function TriageWorkspace({ session }: TriageWorkspaceProps) {
         .then(x => x.json())
         .then(setDecisions);
     };
+    ws.onerror = () => setMessage('WebSocket connection failed.');
     ws.onclose = () => setMessage('WebSocket disconnected; refresh to reconnect.');
 
     return () => ws.close();

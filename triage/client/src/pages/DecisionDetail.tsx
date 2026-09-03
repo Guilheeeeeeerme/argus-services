@@ -9,8 +9,17 @@ interface Evidence {
   vlm_result?: { reasoning?: string; description?: string };
 }
 
+interface Decision {
+  id: string;
+  state: string;
+  evidence_count: number;
+  cumulative_severity: number;
+  updated_at: string;
+  evidences?: Evidence[];
+}
+
 interface DecisionDetailProps {
-  decision: any;
+  decision: Decision;
   tenant: string;
   onResolved: () => void;
 }
@@ -42,7 +51,7 @@ export function DecisionDetail({ decision, tenant, onResolved }: DecisionDetailP
     <Card>
       <h2>Decision detail</h2>
       <p>
-        <Badge variant={decision.state}>{decision.state}</Badge>
+        <Badge variant={decision.state as any}>{decision.state}</Badge>
         {' · '}{decision.evidence_count} evidences
       </p>
       {decision.evidences?.map((evidence: Evidence) => (
